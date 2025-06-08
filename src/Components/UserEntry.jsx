@@ -1,12 +1,17 @@
-import {Box, Button, Container, TextField, Typography,} from "@mui/material";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { LightMode, DarkMode } from "@mui/icons-material";
 import { useThemeContext } from "../Context/ThemeContext.jsx";
 import CodeforcesLogo from "../Util/img.png";
 import LeetCodeLogo from "../Util/img_1.png";
 import "@fontsource/anton";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 const UserEntry = () => {
     const { darkMode, toggleDarkMode } = useThemeContext();
+    const [cfHandle, setCfHandle] = useState("");
+    const [lcHandle, setLcHandle] = useState("");
 
     const pageCenter = {
         display: "flex",
@@ -17,26 +22,50 @@ const UserEntry = () => {
     const textInput = {
         variant: "outlined",
         margin: "normal",
+        fullWidth: true,
         sx: {
             backgroundColor: darkMode ? "#424242" : "#fff",
-            width: 460,
-            borderRadius: 2,
+            borderRadius: 4,
+            flexGrow: 1,
         },
         slotProps: {
             input: {
                 sx: {
-                    borderRadius: 2,
+                    borderRadius: 4,
                 },
             },
         },
     };
 
+    const handleSubmit = () => {
+        if(cfHandle === "" && lcHandle === "") {
+            toast.error("Please enter the Handles!");
+            return;
+        }else if(cfHandle === "" ) {
+            toast.error("Please enter the Codeforces Handle!");
+            return;
+        }else if(lcHandle === ""){
+            toast.error("Please enter the Leetcode Handle!");
+            return;
+        }
+        localStorage.setItem("Codeforces Handle", cfHandle.trim());
+        localStorage.setItem("Leetcode Handle", lcHandle.trim());
+        console.log("Handles saved:", { cfHandle, lcHandle });
+    };
+
     return (
         <Container
+            className="animated-background"
+            component={motion.div}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
             sx={{
                 ...pageCenter,
                 flexDirection: "column",
                 height: "100vh",
+                width: "100vw",
+                transition: "background 1s ease",
             }}
         >
             <Button
@@ -53,7 +82,7 @@ const UserEntry = () => {
                     background: darkMode
                         ? "linear-gradient(135deg, #f2d383, #f8b500)"
                         : "linear-gradient(135deg, #1e3c72, #2a5298)",
-                    color: !darkMode ? "white" : "black",
+                    color: darkMode ? "black" : "white",
                     boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
                     "&:hover": {
                         transform: "scale(1.05)",
@@ -68,6 +97,10 @@ const UserEntry = () => {
 
             <Typography
                 variant="h5"
+                component={motion.div}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
                 sx={{
                     fontSize: "2.0rem",
                     fontFamily: "anton",
@@ -78,56 +111,81 @@ const UserEntry = () => {
                 Enter your Handles
             </Typography>
 
-            <Box
-                sx={{
-                    ...pageCenter,
-                    flexDirection: "column",
-                    width: "50%",
-                    backgroundColor: darkMode ? "#303030" : "#fafafa",
-                    borderRadius: 4,
-                    boxShadow: darkMode
-                        ? "0px 4px 6px rgba(255, 255, 255, 0.10)"
-                        : 3,
-                    padding: 4,
-                }}
+            <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                style={{ width: "100%", display: "flex", justifyContent: "center" }}
             >
-                <Box sx={{ ...pageCenter, gap: 2 }}>
-                    <img
-                        src={CodeforcesLogo}
-                        alt="Codeforces"
-                        style={{ width: "30px", height: "30px" }}
-                    />
-                    <TextField {...textInput} label="Codeforces Handle" />
-                </Box>
-
-                <Box sx={{ ...pageCenter, gap: 1.7 }}>
-                    <img
-                        src={LeetCodeLogo}
-                        alt={"LeetCode"}
-                        style={{ width: "35px", height: "35px" }}
-                    />
-                    <TextField {...textInput} label="LeetCode Handle" />
-                </Box>
-
-                <Button
-                    variant="contained"
+                <Box
                     sx={{
-                        mt: 3,
-                        borderRadius: 2,
-                        paddingX: 4,
-                        paddingY: 1.2,
-                        fontWeight: "bold",
-                        fontSize: "1rem",
-                        textTransform: "none",
-                        backgroundColor: darkMode ? "#4caf50" : "#2e7d32",
-                        "&:hover": {
-                            backgroundColor: darkMode ? "#66bb6a" : "#1b5e20",
-                        },
+                        ...pageCenter,
+                        flexDirection: "column",
+                        width: "50%",
+                        backgroundColor: darkMode ? "#303030" : "#fafafa",
+                        borderRadius: 4,
+                        boxShadow: darkMode
+                            ? "0px 4px 6px rgba(255, 255, 255, 0.10)"
+                            : 3,
+                        padding: 4,
+                        gap: 2,
                     }}
                 >
-                    Submit
-                </Button>
-            </Box>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2, width: "100%" }}>
+                        <img
+                            src={CodeforcesLogo}
+                            alt="Codeforces"
+                            style={{ width: "30px", height: "30px" }}
+                        />
+                        <TextField
+                            {...textInput}
+                            label="Codeforces Handle"
+                            value={cfHandle}
+                            onChange={(e) => setCfHandle(e.target.value)}
+                        />
+                    </Box>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2, width: "100%" }}>
+                        <img
+                            src={LeetCodeLogo}
+                            alt="LeetCode"
+                            style={{ width: "35px", height: "35px" }}
+                        />
+                        <TextField
+                            {...textInput}
+                            label="LeetCode Handle"
+                            value={lcHandle}
+                            onChange={(e) => setLcHandle(e.target.value)}
+                        />
+                    </Box>
+
+                    <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        style={{ width: "100%", display: "flex", justifyContent: "center" }}
+                    >
+                        <Button
+                            variant="contained"
+                            sx={{
+                                mt: 3,
+                                borderRadius: 2,
+                                paddingX: 4,
+                                paddingY: 1.2,
+                                fontWeight: "bold",
+                                fontSize: "1rem",
+                                textTransform: "none",
+                                backgroundColor: darkMode ? "#4168ed" : "#2e7d32",
+                                "&:hover": {
+                                    backgroundColor: darkMode ? "#204add" : "#1b5e20",
+                                },
+                            }}
+                            onClick={handleSubmit}
+                        >
+                            Submit
+                        </Button>
+                    </motion.div>
+                </Box>
+            </motion.div>
         </Container>
     );
 };
