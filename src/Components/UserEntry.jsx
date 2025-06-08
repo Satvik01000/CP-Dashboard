@@ -7,35 +7,22 @@ import "@fontsource/anton";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import RankRiserLogo from "../Util/Rank-Riser.png"
+import RankRiserLogoLight from "../Util/Rank-Riser-Light.png"
 
 const UserEntry = () => {
     const { darkMode, toggleDarkMode } = useThemeContext();
     const [cfHandle, setCfHandle] = useState("");
     const [lcHandle, setLcHandle] = useState("");
 
-    const pageCenter = {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-    };
+    const pageCenter = {display: "flex", alignItems: "center", justifyContent: "center",};
 
     const textInput = {
         variant: "outlined",
         margin: "normal",
         fullWidth: true,
-        sx: {
-            backgroundColor: darkMode ? "#424242" : "#fff",
-            borderRadius: 4,
-            flexGrow: 1,
-        },
-        slotProps: {
-            input: {
-                sx: {
-                    borderRadius: 4,
-                },
-            },
-        },
-    };
+        sx: {backgroundColor: darkMode ? "#424242" : "#fff", borderRadius: 4, flexGrow: 1,},
+        slotProps: {input: {sx: {borderRadius: 4,},},},};
 
     const handleSubmit = () => {
         if(cfHandle === "" && lcHandle === "") {
@@ -68,6 +55,7 @@ const UserEntry = () => {
                 transition: "background 1s ease",
             }}
         >
+                <img src={darkMode ? RankRiserLogo : RankRiserLogoLight} alt="Rank Riser" style={{position:"fixed", top:0, left:0, width:"10%", height:"15%"}} alt="Rank Riser" />
             <Button
                 onClick={toggleDarkMode}
                 variant="contained"
