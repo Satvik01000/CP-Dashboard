@@ -36,7 +36,7 @@ const Navbar = () => {
 
     return (
         <AppBar
-            position="static"
+            position="fixed"
             sx={{
                 backgroundColor: "#272727",  // fixed color, no darkMode dependency
                 color: theme.palette.text.primary,
@@ -51,7 +51,7 @@ const Navbar = () => {
                             src={RankRiserLogo}
                             alt="Rank Riser"
                             style={{
-                                height: 'clamp(28px, 6vw, 40px)',
+                                height: 'clamp(32px, 7vw, 48px)',
                                 marginRight: theme.spacing(1.5),
                             }}
                         />
