@@ -10,13 +10,14 @@ import toast from "react-hot-toast";
 import RankRiserLogo from "../Util/Rank-Riser.png"
 import RankRiserLogoLight from "../Util/Rank-Riser-Light.png"
 import PersonIcon from '@mui/icons-material/Person';
+import {useNavigate} from "react-router";
 
 const UserEntry = () => {
     const { darkMode, toggleDarkMode } = useThemeContext();
     const [cfHandle, setCfHandle] = useState("");
     const [lcHandle, setLcHandle] = useState("");
     const [username, setUsername] = useState("");
-
+    const navigate = useNavigate();
     const pageCenter = {display: "flex", alignItems: "center", justifyContent: "center",};
 
     const textInput = {
@@ -43,7 +44,7 @@ const UserEntry = () => {
         localStorage.setItem("Username", username);
         localStorage.setItem("Codeforces Handle", cfHandle.trim());
         localStorage.setItem("Leetcode Handle", lcHandle.trim());
-        console.log("Handles saved:", { cfHandle, lcHandle });
+        navigate("/dashboard");
     };
 
     return (

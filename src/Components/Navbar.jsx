@@ -1,18 +1,5 @@
 import * as React from 'react';
-import {
-    AppBar,
-    Box,
-    Toolbar,
-    IconButton,
-    Typography,
-    Menu,
-    Container,
-    Avatar,
-    Button,
-    Tooltip,
-    MenuItem,
-    useTheme
-} from '@mui/material';
+import {AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem, useTheme} from '@mui/material';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import RankRiserLogo from '../Util/Rank-Riser.png';
@@ -20,25 +7,32 @@ import { useThemeContext } from '../Context/ThemeContext.jsx';
 import { useNavigate } from "react-router";
 
 const pages = ['Upcoming Contests', 'Past Contests', 'Rating Trends'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Logout'];
 
 const Navbar = () => {
     const { darkMode, toggleDarkMode } = useThemeContext();
-    const theme = useTheme();
     const navigate = useNavigate();
+    const theme = useTheme();
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
 
     const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
     const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
     const handleCloseNavMenu = () => setAnchorElNav(null);
-    const handleCloseUserMenu = () => setAnchorElUser(null);
+
+    const handleCloseUserMenu = () => {
+        localStorage.removeItem("Codeforces Handle");
+        localStorage.removeItem("Leetcode Handle");
+        localStorage.removeItem("Username");
+        navigate("/dashboard");
+        window.location.reload(); // Refresh the page after logout
+    };
 
     return (
         <AppBar
             position="fixed"
             sx={{
-                backgroundColor: "#272727",  // fixed color, no darkMode dependency
+                backgroundColor: "#272727",
                 color: theme.palette.text.primary,
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
             }}
@@ -46,7 +40,7 @@ const Navbar = () => {
             <Container maxWidth="xl">
                 <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
                     {/* Logo + Brand */}
-                    <Box sx={{ cursor: "pointer", display: 'flex', alignItems: 'center' }} onClick={() => navigate("/")}>
+                    <Box sx={{ cursor: "pointer", display: 'flex', alignItems: 'center' }} onClick={() => navigate("/dashboard")}>
                         <img
                             src={RankRiserLogo}
                             alt="Rank Riser"
@@ -112,6 +106,7 @@ const Navbar = () => {
                                 onClick={handleCloseNavMenu}
                                 sx={{
                                     color: 'white',
+                                    borderRadius: 4,
                                     textTransform: 'none',
                                     fontWeight: 500,
                                     fontSize: '1rem',
@@ -127,7 +122,7 @@ const Navbar = () => {
                         ))}
                     </Box>
 
-                    {/* Right-side controls: Toggle button + Avatar */}
+                    {/* Right-side controls */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <Button
                             onClick={toggleDarkMode}
@@ -167,11 +162,14 @@ const Navbar = () => {
                             anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                             open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
+                            onClose={() => setAnchorElUser(null)}
                             sx={{ mt: '45px' }}
                         >
                             {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                <MenuItem
+                                    key={setting}
+                                    onClick={handleCloseUserMenu}
+                                >
                                     <Typography textAlign="center">{setting}</Typography>
                                 </MenuItem>
                             ))}

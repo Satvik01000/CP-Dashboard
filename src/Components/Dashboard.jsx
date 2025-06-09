@@ -1,22 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import "@fontsource/anton";
 import Navbar from "./Navbar.jsx";
-import {
-    Box,
-    Grid,
-    Paper,
-    Typography,
-    List,
-    ListItem,
-    ListItemText,
-    InputBase,
-    IconButton,
-    useTheme,
-    useMediaQuery
-} from "@mui/material";
+import {Box, Grid, Paper, Typography, List, ListItem, ListItemText, IconButton, useTheme, useMediaQuery, TextField} from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from '@mui/system';
+import {useNavigate} from "react-router";
 
 const AnimatedListItem = styled(ListItem)(({ theme }) => ({
     transition: 'opacity 0.5s ease, transform 0.3s ease',
@@ -54,7 +42,7 @@ const FrostedGlass = styled(Paper)(({ theme }) => ({
 const Dashboard = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
+    const navigate = useNavigate();
     const [todayProblems, setTodayProblems] = useState(() => {
         const stored = localStorage.getItem("Today");
         return stored ? JSON.parse(stored) : [];
@@ -69,6 +57,16 @@ const Dashboard = () => {
     const [removingItems, setRemovingItems] = useState({ Today: [], Upsolve: [] });
 
     useEffect(() => {
+        const leet = localStorage.getItem("Leetcode Handle");
+        const cf = localStorage.getItem("Codeforces Handle");
+        const user = localStorage.getItem("Username");
+
+        if (!leet || !cf || !user || leet.trim() === "" || cf.trim() === "" || user.trim() === "") {
+            navigate("/");
+        }
+    }, []);
+
+    useEffect(() => {
         localStorage.setItem("Today", JSON.stringify(todayProblems));
     }, [todayProblems]);
 
@@ -77,21 +75,37 @@ const Dashboard = () => {
     }, [upsolveProblems]);
 
     const handleAnalyse = () => {
-        if (!inputText.trim()) return;
-        if (inputText.toLowerCase().includes("solve")) {
-            setTodayProblems(prev => [...prev, inputText]);
-        } else {
-            setUpsolveProblems(prev => [...prev, inputText]);
+        const lines = inputText
+            .split('\n')
+            .map(line => line.trim())
+            .filter(line => line.length > 0);
+
+        if (lines.length === 0) return;
+
+        const todayItems = [];
+        const upsolveItems = [];
+
+        lines.forEach(line => {
+            const [type, ...rest] = line.split(" ");
+            const problem = rest.join(" ").trim();
+
+            if (type.toLowerCase() === "solve") {
+                todayItems.push(problem);
+            } else if (type.toLowerCase() === "upsolve") {
+                upsolveItems.push(problem);
+            }
+        });
+
+        if (todayItems.length > 0) {
+            setTodayProblems(prev => [...prev, ...todayItems]);
         }
-        setInputText("");
+        if (upsolveItems.length > 0) {
+            setUpsolveProblems(prev => [...prev, ...upsolveItems]);
+        }
+
+        setInputText(""); // clear input
     };
 
-    const handleKeyDown = (e) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            handleAnalyse();
-        }
-    };
 
     const removeWithAnimation = (type, index) => {
         const key = type === 'today' ? 'Today' : 'Upsolve';
@@ -121,7 +135,7 @@ const Dashboard = () => {
     const heading = {
         variant: "h4",
         gutterBottom: true,
-        fontFamily: "anton",
+        fontWeight: "bold",
         sx: { letterSpacing: 2, color: theme.palette.text.primary },
     };
 
@@ -130,15 +144,7 @@ const Dashboard = () => {
             <Navbar />
 
             <Box
-                sx={{
-                    minHeight: "100vh",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    backgroundAttachment: "fixed",
-                    px: 2,
-                    pt: 10,
-                    pb: 10,
-                }}
+                sx={{minHeight: "100vh", backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed", px: 2, pt: 10, pb: 10,}}
             >
                 <Grid
                     container
@@ -224,12 +230,22 @@ const Dashboard = () => {
                         boxShadow: theme.shadows[4],
                     }}
                 >
-                    <InputBase
+                    <TextField
                         sx={{ ml: 1, flex: 1 }}
                         placeholder="Describe your tasks..."
                         value={inputText}
                         onChange={(e) => setInputText(e.target.value)}
-                        onKeyDown={handleKeyDown}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && e.shiftKey) {
+                                // Let newline happen
+                            } else if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleAnalyse();
+                            }
+                        }}
+                        multiline
+                        maxRows={6}
+                        variant="standard"
                     />
                     <IconButton type="submit" sx={{ p: "10px" }}>
                         <SendIcon />
