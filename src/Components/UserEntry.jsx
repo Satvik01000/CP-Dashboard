@@ -9,11 +9,13 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import RankRiserLogo from "../Util/Rank-Riser.png"
 import RankRiserLogoLight from "../Util/Rank-Riser-Light.png"
+import PersonIcon from '@mui/icons-material/Person';
 
 const UserEntry = () => {
     const { darkMode, toggleDarkMode } = useThemeContext();
     const [cfHandle, setCfHandle] = useState("");
     const [lcHandle, setLcHandle] = useState("");
+    const [username, setUsername] = useState("");
 
     const pageCenter = {display: "flex", alignItems: "center", justifyContent: "center",};
 
@@ -25,8 +27,11 @@ const UserEntry = () => {
         slotProps: {input: {sx: {borderRadius: 4,},},},};
 
     const handleSubmit = () => {
-        if(cfHandle === "" && lcHandle === "") {
+        if(cfHandle === "" && lcHandle === "" && username === "") {
             toast.error("Please enter the Handles!");
+            return;
+        }else if(username === ""){
+            toast.error("Please enter the Username Handle!");
             return;
         }else if(cfHandle === "" ) {
             toast.error("Please enter the Codeforces Handle!");
@@ -35,6 +40,7 @@ const UserEntry = () => {
             toast.error("Please enter the Leetcode Handle!");
             return;
         }
+        localStorage.setItem("Username", username);
         localStorage.setItem("Codeforces Handle", cfHandle.trim());
         localStorage.setItem("Leetcode Handle", lcHandle.trim());
         console.log("Handles saved:", { cfHandle, lcHandle });
@@ -62,7 +68,7 @@ const UserEntry = () => {
                 sx={{
                     position: "fixed",
                     borderRadius: "10px !important",
-                    top: 20,
+                    top: 45,
                     right: 20,
                     fontWeight: "bold",
                     px: 3,
@@ -119,11 +125,21 @@ const UserEntry = () => {
                         gap: 2,
                     }}
                 >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2.8, width: "100%" }}>
+                        <PersonIcon sx={{ mt:0.8}}/>
+                        <TextField
+                            {...textInput}
+                            label="Username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </Box>
+
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2, width: "100%" }}>
                         <img
                             src={CodeforcesLogo}
                             alt="Codeforces"
-                            style={{ width: "30px", height: "30px" }}
+                            style={{ width: "30px", height: "30px", marginTop: 8 }}
                         />
                         <TextField
                             {...textInput}
@@ -137,7 +153,7 @@ const UserEntry = () => {
                         <img
                             src={LeetCodeLogo}
                             alt="LeetCode"
-                            style={{ width: "35px", height: "35px" }}
+                            style={{ width: "35px", height: "35px", marginTop: 8}}
                         />
                         <TextField
                             {...textInput}
