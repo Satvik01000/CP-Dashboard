@@ -98,7 +98,7 @@ const UserEntry = () => {
                 transition={{ duration: 0.6 }}
                 sx={{
                     fontSize: "2.0rem",
-                    fontFamily: "anton",
+                    fontWeight: "bold",
                     letterSpacing: 1,
                     mb: 3,
                 }}
