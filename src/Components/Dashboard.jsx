@@ -155,7 +155,7 @@ const Dashboard = () => {
                     {/* Problems Today */}
                     <Grid item xs={12} md={5} lg={4}>
                         <FrostedGlass elevation={4}>
-                            <Typography {...heading}>Problems to Solve Today</Typography>
+                            <Typography {...heading} sx={{ textDecoration: "underline", color:"#cf5555" }}>Problems to Solve Today</Typography>
                             <List sx={{ overflowY: 'auto', flex: 1, cursor: 'pointer' }}>
                                 {todayProblems.map((prob, i) => (
                                     <AnimatedListItem
@@ -181,7 +181,7 @@ const Dashboard = () => {
                     {/* Upsolve Problems */}
                     <Grid item xs={12} md={5} lg={4}>
                         <FrostedGlass elevation={4}>
-                            <Typography {...heading}>Problems to Upsolve</Typography>
+                            <Typography {...heading} sx={{ textDecoration: "underline", color:"#cf5555" }}>Problems to Upsolve</Typography>
                             <List sx={{ overflowY: 'auto', flex: 1, cursor: 'pointer' }}>
                                 {upsolveProblems.map((prob, i) => (
                                     <AnimatedListItem

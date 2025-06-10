@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem, useTheme} from '@mui/material';
-
 import MenuIcon from '@mui/icons-material/Menu';
 import RankRiserLogo from '../Util/Rank-Riser.png';
 import { useThemeContext } from '../Context/ThemeContext.jsx';
@@ -18,7 +17,10 @@ const Navbar = () => {
 
     const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
     const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
-    const handleCloseNavMenu = () => setAnchorElNav(null);
+    const handleCloseNavMenu = (button) => {
+        if(button === "Upcoming Contests")
+            navigate("/upcoming-contests");
+    }
 
     const handleCloseUserMenu = () => {
         localStorage.removeItem("Codeforces Handle");
@@ -84,10 +86,11 @@ const Navbar = () => {
                             sx={{ display: { xs: 'block', md: 'none' } }}
                         >
                             {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                                <MenuItem key={page} onClick={() => handleCloseNavMenu(page)}>
                                     <Typography textAlign="center">{page}</Typography>
                                 </MenuItem>
                             ))}
+
                         </Menu>
                     </Box>
 
@@ -103,7 +106,9 @@ const Navbar = () => {
                         {pages.map((page) => (
                             <Button
                                 key={page}
-                                onClick={handleCloseNavMenu}
+                                onClick={() => {
+                                    handleCloseNavMenu(page)
+                                }}
                                 sx={{
                                     color: 'white',
                                     borderRadius: 4,
