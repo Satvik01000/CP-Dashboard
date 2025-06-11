@@ -5,7 +5,7 @@ import RankRiserLogo from '../Util/Rank-Riser.png';
 import { useThemeContext } from '../Context/ThemeContext.jsx';
 import { useNavigate } from "react-router";
 
-const pages = ['Upcoming Contests', 'Past Contests', 'Rating Trends'];
+const pages = ['Dashboard', 'Upcoming Contests', 'Rating Trends'];
 const settings = ['Logout'];
 
 const Navbar = () => {
@@ -18,8 +18,13 @@ const Navbar = () => {
     const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
     const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
     const handleCloseNavMenu = (button) => {
+        if(button === "Dashboard")
+            navigate('/dashboard');
         if(button === "Upcoming Contests")
             navigate("/upcoming-contests");
+        if(button === "Rating Trends")
+            navigate("/rating-trends");
+
     }
 
     const handleCloseUserMenu = () => {
