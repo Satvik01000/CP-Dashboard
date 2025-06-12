@@ -24,7 +24,7 @@ const RatingTrends = () => {
         const fetchCodeforcesRatingData = async () => {
             try {
                 const handle = localStorage.getItem("Codeforces Handle");
-                const response = await axios.get(`https://codeforces.com/api/user.rating?handle=${handle}`);
+                const response = await axios.get(`leetcode-proxy-tau.vercel.app/leetcode-contests/${handle}`);
                 const ratingValues = response.data.result.map((r) => r.newRating);
                 setCodeforcesRating(ratingValues);
             } catch (error) {
