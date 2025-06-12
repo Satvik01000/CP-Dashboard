@@ -7,10 +7,10 @@ import "@fontsource/anton";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import RankRiserLogo from "../Util/Rank-Riser.png"
-import RankRiserLogoLight from "../Util/Rank-Riser-Light.png"
+import RankRiserLogo from "../Util/Rank-Riser.png";
+import RankRiserLogoLight from "../Util/Rank-Riser-Light.png";
 import PersonIcon from '@mui/icons-material/Person';
-import {useNavigate} from "react-router";
+import { useNavigate } from "react-router";
 
 const UserEntry = () => {
     const { darkMode, toggleDarkMode } = useThemeContext();
@@ -18,29 +18,43 @@ const UserEntry = () => {
     const [lcHandle, setLcHandle] = useState("");
     const [username, setUsername] = useState("");
     const navigate = useNavigate();
-    const pageCenter = {display: "flex", alignItems: "center", justifyContent: "center",};
+    const pageCenter = {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+    };
 
     const textInput = {
         variant: "outlined",
         margin: "normal",
         fullWidth: true,
-        sx: {backgroundColor: darkMode ? "#424242" : "#fff", borderRadius: 4, flexGrow: 1,},
-        slotProps: {input: {sx: {borderRadius: 4,},},},};
+        sx: {
+            backgroundColor: darkMode ? "#424242" : "#fff",
+            borderRadius: 4,
+            flexGrow: 1,
+        },
+        slotProps: {
+            input: {
+                sx: { borderRadius: 4 },
+            },
+        },
+    };
 
     const handleSubmit = () => {
-        if(cfHandle === "" && lcHandle === "" && username === "") {
+        if (cfHandle === "" && lcHandle === "" && username === "") {
             toast.error("Please enter the Handles!");
             return;
-        }else if(username === ""){
+        } else if (username === "") {
             toast.error("Please enter the Username Handle!");
             return;
-        }else if(cfHandle === "" ) {
+        } else if (cfHandle === "") {
             toast.error("Please enter the Codeforces Handle!");
             return;
-        }else if(lcHandle === ""){
+        } else if (lcHandle === "") {
             toast.error("Please enter the Leetcode Handle!");
             return;
         }
+
         localStorage.setItem("Username", username);
         localStorage.setItem("Codeforces Handle", cfHandle.trim());
         localStorage.setItem("Leetcode Handle", lcHandle.trim());
@@ -62,7 +76,17 @@ const UserEntry = () => {
                 transition: "background 1s ease",
             }}
         >
-                <img src={darkMode ? RankRiserLogo : RankRiserLogoLight} alt="Rank Riser" style={{position:"fixed", top:0, left:0, width:"10%", height:"15%"}} alt="Rank Riser" />
+            <img
+                src={darkMode ? RankRiserLogo : RankRiserLogoLight}
+                alt="Rank Riser"
+                style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "10%",
+                    height: "15%",
+                }}
+            />
             <Button
                 onClick={toggleDarkMode}
                 variant="contained"
@@ -113,6 +137,11 @@ const UserEntry = () => {
                 style={{ width: "100%", display: "flex", justifyContent: "center" }}
             >
                 <Box
+                    component="form"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        handleSubmit();
+                    }}
                     sx={{
                         ...pageCenter,
                         flexDirection: "column",
@@ -127,7 +156,7 @@ const UserEntry = () => {
                     }}
                 >
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2.8, width: "100%" }}>
-                        <PersonIcon sx={{ mt:0.8}}/>
+                        <PersonIcon sx={{ mt: 0.8 }} />
                         <TextField
                             {...textInput}
                             label="Username"
@@ -154,7 +183,7 @@ const UserEntry = () => {
                         <img
                             src={LeetCodeLogo}
                             alt="LeetCode"
-                            style={{ width: "35px", height: "35px", marginTop: 8}}
+                            style={{ width: "35px", height: "35px", marginTop: 8 }}
                         />
                         <TextField
                             {...textInput}
@@ -170,6 +199,7 @@ const UserEntry = () => {
                         style={{ width: "100%", display: "flex", justifyContent: "center" }}
                     >
                         <Button
+                            type="submit"
                             variant="contained"
                             sx={{
                                 mt: 3,
@@ -184,7 +214,6 @@ const UserEntry = () => {
                                     backgroundColor: darkMode ? "#204add" : "#1b5e20",
                                 },
                             }}
-                            onClick={handleSubmit}
                         >
                             Submit
                         </Button>

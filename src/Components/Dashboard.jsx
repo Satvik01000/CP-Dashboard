@@ -4,7 +4,7 @@ import {Box, Grid, Paper, Typography, List, ListItem, ListItemText, IconButton, 
 import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from '@mui/system';
-import {useNavigate} from "react-router";
+import { useNavigate } from "react-router";
 
 const AnimatedListItem = styled(ListItem)(({ theme }) => ({
     transition: 'opacity 0.5s ease, transform 0.3s ease',
@@ -43,6 +43,7 @@ const Dashboard = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const navigate = useNavigate();
+
     const [todayProblems, setTodayProblems] = useState(() => {
         const stored = localStorage.getItem("Today");
         return stored ? JSON.parse(stored) : [];
@@ -53,8 +54,17 @@ const Dashboard = () => {
         return stored ? JSON.parse(stored) : [];
     });
 
+    const [toLearnTopics, setToLearnTopics] = useState(() => {
+        const stored = localStorage.getItem("ToLearn");
+        return stored ? JSON.parse(stored) : [];
+    });
+
     const [inputText, setInputText] = useState("");
-    const [removingItems, setRemovingItems] = useState({ Today: [], Upsolve: [] });
+    const [removingItems, setRemovingItems] = useState({
+        Today: [],
+        Upsolve: [],
+        ToLearn: []
+    });
 
     useEffect(() => {
         const leet = localStorage.getItem("Leetcode Handle");
@@ -74,6 +84,10 @@ const Dashboard = () => {
         localStorage.setItem("Upsolve", JSON.stringify(upsolveProblems));
     }, [upsolveProblems]);
 
+    useEffect(() => {
+        localStorage.setItem("ToLearn", JSON.stringify(toLearnTopics));
+    }, [toLearnTopics]);
+
     const handleAnalyse = () => {
         const lines = inputText
             .split('\n')
@@ -84,31 +98,30 @@ const Dashboard = () => {
 
         const todayItems = [];
         const upsolveItems = [];
+        const learnItems = [];
 
         lines.forEach(line => {
             const [type, ...rest] = line.split(" ");
-            const problem = rest.join(" ").trim();
+            const content = rest.join(" ").trim();
 
             if (type.toLowerCase() === "solve") {
-                todayItems.push(problem);
+                todayItems.push(content);
             } else if (type.toLowerCase() === "upsolve") {
-                upsolveItems.push(problem);
+                upsolveItems.push(content);
+            } else if (type.toLowerCase() === "learn") {
+                learnItems.push(content);
             }
         });
 
-        if (todayItems.length > 0) {
-            setTodayProblems(prev => [...prev, ...todayItems]);
-        }
-        if (upsolveItems.length > 0) {
-            setUpsolveProblems(prev => [...prev, ...upsolveItems]);
-        }
+        if (todayItems.length > 0) setTodayProblems(prev => [...prev, ...todayItems]);
+        if (upsolveItems.length > 0) setUpsolveProblems(prev => [...prev, ...upsolveItems]);
+        if (learnItems.length > 0) setToLearnTopics(prev => [...prev, ...learnItems]);
 
         setInputText(""); // clear input
     };
 
-
     const removeWithAnimation = (type, index) => {
-        const key = type === 'today' ? 'Today' : 'Upsolve';
+        const key = type === 'today' ? 'Today' : type === 'upsolve' ? 'Upsolve' : 'ToLearn';
         setRemovingItems(prev => ({
             ...prev,
             [key]: [...prev[key], index]
@@ -119,10 +132,14 @@ const Dashboard = () => {
                 const newList = [...todayProblems];
                 newList.splice(index, 1);
                 setTodayProblems(newList);
-            } else {
+            } else if (type === 'upsolve') {
                 const newList = [...upsolveProblems];
                 newList.splice(index, 1);
                 setUpsolveProblems(newList);
+            } else if (type === 'learn') {
+                const newList = [...toLearnTopics];
+                newList.splice(index, 1);
+                setToLearnTopics(newList);
             }
 
             setRemovingItems(prev => ({
@@ -153,7 +170,7 @@ const Dashboard = () => {
                     alignItems="flex-start"
                 >
                     {/* Problems Today */}
-                    <Grid item xs={12} md={5} lg={4}>
+                    <Grid item xs={12} md={4}>
                         <FrostedGlass elevation={4}>
                             <Typography {...heading} sx={{ textDecoration: "underline", color:"#cf5555" }}>Problems to Solve Today</Typography>
                             <List sx={{ overflowY: 'auto', flex: 1, cursor: 'pointer' }}>
@@ -179,7 +196,7 @@ const Dashboard = () => {
                     </Grid>
 
                     {/* Upsolve Problems */}
-                    <Grid item xs={12} md={5} lg={4}>
+                    <Grid item xs={12} md={4}>
                         <FrostedGlass elevation={4}>
                             <Typography {...heading} sx={{ textDecoration: "underline", color:"#cf5555" }}>Problems to Upsolve</Typography>
                             <List sx={{ overflowY: 'auto', flex: 1, cursor: 'pointer' }}>
@@ -198,6 +215,32 @@ const Dashboard = () => {
                                         }
                                     >
                                         <ListItemText primary={prob} />
+                                    </AnimatedListItem>
+                                ))}
+                            </List>
+                        </FrostedGlass>
+                    </Grid>
+
+                    {/* To Learn Topics */}
+                    <Grid item xs={12} md={4}>
+                        <FrostedGlass elevation={4}>
+                            <Typography {...heading} sx={{ textDecoration: "underline", color:"#cf5555" }}>Topics to Learn</Typography>
+                            <List sx={{ overflowY: 'auto', flex: 1, cursor: 'pointer' }}>
+                                {toLearnTopics.map((topic, i) => (
+                                    <AnimatedListItem
+                                        key={i}
+                                        className={`${removingItems["ToLearn"].includes(i) ? 'removing crossed' : ''}`}
+                                        onClick={() => removeWithAnimation('learn', i)}
+                                        secondaryAction={
+                                            <IconButton edge="end" onClick={(e) => {
+                                                e.stopPropagation();
+                                                removeWithAnimation('learn', i);
+                                            }}>
+                                                <DeleteIcon color="error" />
+                                            </IconButton>
+                                        }
+                                    >
+                                        <ListItemText primary={topic} />
                                     </AnimatedListItem>
                                 ))}
                             </List>
@@ -237,7 +280,7 @@ const Dashboard = () => {
                         onChange={(e) => setInputText(e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter' && e.shiftKey) {
-                                // Let newline happen
+                                // Allow newlines
                             } else if (e.key === 'Enter') {
                                 e.preventDefault();
                                 handleAnalyse();
