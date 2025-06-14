@@ -18,13 +18,14 @@ ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Tooltip,
 
 const RatingTrends = () => {
     const [codeforcesRating, setCodeforcesRating] = useState([]);
-    const [leetcodeRating, setLeetcodesRating] = useState([]);
+    const [leetcodeRating, setLeetcodeRating] = useState([]);
 
     useEffect(() => {
         const fetchCodeforcesRatingData = async () => {
             try {
                 const handle = localStorage.getItem("Codeforces Handle");
-                const response = await axios.get(`leetcode-proxy-tau.vercel.app/leetcode-contests/${handle}`);
+                if (!handle) return;
+                const response = await axios.get(`https://codeforces.com/api/user.rating?handle=${handle}`);
                 const ratingValues = response.data.result.map((r) => r.newRating);
                 setCodeforcesRating(ratingValues);
             } catch (error) {
@@ -35,24 +36,24 @@ const RatingTrends = () => {
         const fetchLeetcodeRatingData = async () => {
             try {
                 const handle = localStorage.getItem("Leetcode Handle");
+                if (!handle) return;
                 const response = await axios.get(`https://leetcode-proxy-fif3p9087-satvik01000s-projects.vercel.app/leetcode-contests/${handle}`);
-
                 const ratingValues = response.data.map(r => r.rating);
-                setLeetcodesRating(ratingValues);
+                setLeetcodeRating(ratingValues);
             } catch (error) {
                 console.error("Failed to fetch LeetCode ratings:", error);
             }
         };
 
-        fetchLeetcodeRatingData();
         fetchCodeforcesRatingData();
+        fetchLeetcodeRatingData();
     }, []);
 
     const getChartData = (ratings, label, color) => ({
         labels: ratings.map((_, index) => `#${index + 1}`),
         datasets: [
             {
-                label: label,
+                label,
                 data: ratings,
                 fill: false,
                 borderColor: color,
